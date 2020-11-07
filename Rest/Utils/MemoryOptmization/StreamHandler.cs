@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rest.Utils.MemoryOptmization
+namespace Master.Berest.Utils.MemoryOptmization
 {
     public static class StreamHandler
     {

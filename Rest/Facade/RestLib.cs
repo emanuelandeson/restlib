@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Rest.Interfaces;
-using Rest.Utils.Extesions;
-using Rest.Utils.MemoryOptmization;
+﻿using Master.Berest.Interfaces;
+using Master.Berest.Utils.Extesions;
+using Master.Berest.Utils.MemoryOptmization;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rest.Facade
+namespace Master.Berest.Facade
 {
     public class RestLib : IRest
     {
@@ -26,7 +26,7 @@ namespace Rest.Facade
             AddHeder();
         }
 
-        protected async Task<HttpResponseMessage> PatchPostPut<T>(string url, T content, HttpMethod method)
+        private async Task<HttpResponseMessage> PatchPostPut<T>(string url, T content, HttpMethod method)
         {
             using (var request = new HttpRequestMessage(method, url))
             {

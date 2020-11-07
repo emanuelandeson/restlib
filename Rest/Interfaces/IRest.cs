@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rest.Interfaces
+namespace Master.Berest.Interfaces
 {
     public interface IRest
     {

@@ -1,4 +1,5 @@
-﻿using Rest.Facade;
+﻿using Master.Berest.Facade;
+using RestSharp;
 using RestTest.Helper;
 using System.Collections.Generic;
 using System.Threading;
@@ -32,7 +33,7 @@ namespace RestTest
 
             //await rest.PutAsync("teste", obj);
 
-            int warm = 1;
+            int warm = 15;
             int maxLoop = 1;
 
             //warm request
@@ -40,6 +41,7 @@ namespace RestTest
 
             try
             {
+                await BenchmarkHelper.BenchAsync(GetBasicRestSharp, maxLoop, nameof(Program.GetBasicRestSharp), null, CancellationToken.None);
                 await BenchmarkHelper.BenchAsync(GetBasicStream, maxLoop, nameof(Program.GetBasicStream), null, CancellationToken.None);
                 await BenchmarkHelper.BenchAsync(GetBasic, maxLoop, nameof(Program.GetBasic), null, CancellationToken.None);
             }
@@ -50,7 +52,15 @@ namespace RestTest
             
         }
 
-        
+        public static async Task GetBasicRestSharp()
+        {
+            var client = new RestClient("https://api.twitter.com/1.1");
+            var request = new RestRequest("https://restcountries.eu/rest/v2/", DataFormat.Json);
+
+            var response = await client.GetAsync<object>(request);
+        }
+
+
         public static async Task GetBasic()
         {
             var rest = new RestLib(new Dictionary<string, string>

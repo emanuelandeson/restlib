@@ -3,19 +3,22 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageId>berest</PackageId>
+    <PackageId>Master.Berest</PackageId>
     <Authors>Emanuel</Authors>
     <Product>berest</Product>
     <Description>The first version of a simple library to call rest APIs.
 Uses stream to write responses and static httpclient to more efficience.</Description>
+    <PackageProjectUrl>https://github.com/emanuelandeson/restlib</PackageProjectUrl>
+    <PackageTags>rest api httpclient http httprequest</PackageTags>
+    <RepositoryUrl>https://github.com/emanuelandeson/restlib</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <Folder Include="Implementations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Implementations\" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
 </Project>

@@ -9,3 +9,5 @@
 /.vs
 /Rest/bin/Debug
 /RestTest/bin/Debug/netcoreapp3.0
+/Rest/bin/Release
+/RestTest/bin/Release/netcoreapp3.0

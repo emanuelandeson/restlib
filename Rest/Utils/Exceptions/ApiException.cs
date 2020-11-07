@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rest.Utils.Extesions
+namespace Master.Berest.Utils.Extesions
 {
     public class ApiException : Exception
     {
