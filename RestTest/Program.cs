@@ -1,6 +1,6 @@
-﻿using DUMMY_NAMESPACE_DESERIALIZACAO;
-using Rest.Facade;
+﻿using Rest.Facade;
 using RestTest.Helper;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,21 +32,31 @@ namespace RestTest
 
             //await rest.PutAsync("teste", obj);
 
-            int maxLoop = 2000;
+            int maxLoop = 25;
+
+            //warm request
             await BenchmarkHelper.BenchAsync(GetBasic, maxLoop, nameof(Program.GetBasic), null, CancellationToken.None);
-            //await BenchmarkHelper.BenchAsync(GetBasicStream, maxLoop, nameof(Program.GetBasicStream), null, CancellationToken.None);
+
+            await BenchmarkHelper.BenchAsync(GetBasicStream, maxLoop, nameof(Program.GetBasicStream), null, CancellationToken.None);
+            await BenchmarkHelper.BenchAsync(GetBasic, maxLoop, nameof(Program.GetBasic), null, CancellationToken.None);
         }
 
+        
         public static async Task GetBasic()
         {
-            var rest = new RestLib();
-            await rest.GetAsync<object>("http://localhost:3000/get");
+            var rest = new RestLib(new Dictionary<string, string>
+            {
+                {"name","maria"},
+                {"JSON","Teste"},
+            });
+
+            await rest.GetAsync<object>("https://restcountries.eu/rest/v2/");
         }
 
         public static async Task GetBasicStream()
         {
             var rest = new RestLib();
-            await rest.GetStreamAsync<object>("http://localhost:3000/get");
+            await rest.GetStreamAsync<object>("https://restcountries.eu/rest/v2/");
         }
     }
 }

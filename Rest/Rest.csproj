@@ -1,7 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>berest</PackageId>
+    <Authors>Emanuel</Authors>
+    <Product>berest</Product>
+    <Description>The first version of a simple library to call rest APIs.
+Uses stream to write responses and static httpclient to more efficience.</Description>
   </PropertyGroup>
 
   <ItemGroup>

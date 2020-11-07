@@ -1,26 +1,34 @@
 ﻿using Newtonsoft.Json;
 using Rest.Interfaces;
 using Rest.Utils.MemoryOptmization;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rest.Facade
 {
     public class RestLib : IRest
     {
-        private static HttpClient client = new HttpClient();
+        private static HttpClient Client = new HttpClient();
+
+        public IDictionary<string, string> Header { get; private set; }
 
         public RestLib()
+        { }
+
+        public RestLib(IDictionary<string, string> header)
         {
+            Header = header;
+            AddHeder();
         }
 
         public async Task<T> GetAsync<T>(string url)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await client.SendAsync(request))
+            using (var response = await Client.SendAsync(request))
             {
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
@@ -37,7 +45,7 @@ namespace Rest.Facade
                 {
                     request.Content = stringContent;
 
-                    using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
                         .ConfigureAwait(false))
                     {
                         response.EnsureSuccessStatusCode();
@@ -66,7 +74,7 @@ namespace Rest.Facade
         {
             using (var request = new HttpRequestMessage(HttpMethod.Delete, url))
             {
-                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
                       .ConfigureAwait(false))
                 {
                     response.EnsureSuccessStatusCode();
@@ -77,8 +85,9 @@ namespace Rest.Facade
 
         public async Task<T> GetStreamAsync<T>(string url)
         {
+            var cancelToken = new CancellationTokenSource();
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+            using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
             {
                 var stream = await response.Content.ReadAsStreamAsync();
 
@@ -94,7 +103,7 @@ namespace Rest.Facade
             {
                 request.Content = httpContent;
 
-                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
+                using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
                 {
                     response.EnsureSuccessStatusCode();
                     return response;
@@ -117,7 +126,7 @@ namespace Rest.Facade
             return await this.PatchPostPutStream(url, putContent, HttpMethod.Put);
         }
 
-        private static HttpContent CreateHttpContent(object content)
+        private HttpContent CreateHttpContent(object content)
         {
             HttpContent httpContent = null;
 
@@ -127,9 +136,24 @@ namespace Rest.Facade
                 StreamHandler.SerializeJsonIntoStream(content, ms);
                 ms.Seek(0, SeekOrigin.Begin);
                 httpContent = new StreamContent(ms);
-                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             }
+
             return httpContent;
+        }
+
+        private void AddHeder()
+        {
+            Client.DefaultRequestHeaders.Clear();
+
+            foreach (var prop in Header)
+            {
+                if (Header == null)
+                    continue;
+
+                var name = prop.Key;
+                var value = prop.Value;
+                Client.DefaultRequestHeaders.Add(name, value);
+            }
         }
     }
 }
