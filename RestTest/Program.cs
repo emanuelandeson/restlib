@@ -32,13 +32,22 @@ namespace RestTest
 
             //await rest.PutAsync("teste", obj);
 
-            int maxLoop = 25;
+            int warm = 1;
+            int maxLoop = 1;
 
             //warm request
-            await BenchmarkHelper.BenchAsync(GetBasic, maxLoop, nameof(Program.GetBasic), null, CancellationToken.None);
+            await BenchmarkHelper.BenchAsync(GetBasic, warm, nameof(Program.GetBasic), null, CancellationToken.None);
 
-            await BenchmarkHelper.BenchAsync(GetBasicStream, maxLoop, nameof(Program.GetBasicStream), null, CancellationToken.None);
-            await BenchmarkHelper.BenchAsync(GetBasic, maxLoop, nameof(Program.GetBasic), null, CancellationToken.None);
+            try
+            {
+                await BenchmarkHelper.BenchAsync(GetBasicStream, maxLoop, nameof(Program.GetBasicStream), null, CancellationToken.None);
+                await BenchmarkHelper.BenchAsync(GetBasic, maxLoop, nameof(Program.GetBasic), null, CancellationToken.None);
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
         
@@ -46,8 +55,8 @@ namespace RestTest
         {
             var rest = new RestLib(new Dictionary<string, string>
             {
-                {"name","maria"},
-                {"JSON","Teste"},
+                {"Country","BR"},
+                {"City","SP"},
             });
 
             await rest.GetAsync<object>("https://restcountries.eu/rest/v2/");
@@ -56,7 +65,7 @@ namespace RestTest
         public static async Task GetBasicStream()
         {
             var rest = new RestLib();
-            await rest.GetStreamAsync<object>("https://restcountries.eu/rest/v2/");
+            await rest.GetStreamAsync<object>("https://restcountries.eu/rest/v2/all");
         }
     }
 }

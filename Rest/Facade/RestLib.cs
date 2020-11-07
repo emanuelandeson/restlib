@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Rest.Interfaces;
+using Rest.Utils.Extesions;
 using Rest.Utils.MemoryOptmization;
 using System.Collections.Generic;
 using System.IO;
@@ -25,17 +26,6 @@ namespace Rest.Facade
             AddHeder();
         }
 
-        public async Task<T> GetAsync<T>(string url)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await Client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<T>(content);
-            }
-        }
-
         protected async Task<HttpResponseMessage> PatchPostPut<T>(string url, T content, HttpMethod method)
         {
             using (var request = new HttpRequestMessage(method, url))
@@ -48,10 +38,36 @@ namespace Rest.Facade
                     using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
                         .ConfigureAwait(false))
                     {
-                        response.EnsureSuccessStatusCode();
-                        return response;
+                        if (response.IsSuccessStatusCode)
+                            return response;
+
+                        var resultContent = await response.Content.ReadAsStringAsync();
+
+                        throw new ApiException
+                        {
+                            StatusCode = (int)response.StatusCode,
+                            Content = resultContent
+                        };
                     }
                 }
+            }
+        }
+
+        public async Task<T> GetAsync<T>(string url)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            using (var response = await Client.SendAsync(request))
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                    return JsonConvert.DeserializeObject<T>(content);
+
+                throw new ApiException
+                {
+                    StatusCode = (int)response.StatusCode,
+                    Content = content
+                };
             }
         }
 
@@ -77,8 +93,16 @@ namespace Rest.Facade
                 using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
                       .ConfigureAwait(false))
                 {
-                    response.EnsureSuccessStatusCode();
-                    return response;
+                    if (response.IsSuccessStatusCode)
+                        return response;
+
+                    var resultContent = await response.Content.ReadAsStringAsync();
+
+                    throw new ApiException
+                    {
+                        StatusCode = (int)response.StatusCode,
+                        Content = resultContent
+                    };
                 }
             }
         }
@@ -87,26 +111,42 @@ namespace Rest.Facade
         {
             var cancelToken = new CancellationTokenSource();
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+            using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancelToken.Token))
             {
                 var stream = await response.Content.ReadAsStreamAsync();
 
-                response.EnsureSuccessStatusCode();
-                return StreamHandler.DeserializeJsonFromStream<T>(stream);
+                if (response.IsSuccessStatusCode)
+                    return StreamHandler.DeserializeJsonFromStream<T>(stream);
+
+                var content = await StreamHandler.StreamToStringAsync(stream);
+
+                throw new ApiException
+                {
+                    StatusCode = (int)response.StatusCode,
+                    Content = content
+                };
             }
         }
 
         private async Task<HttpResponseMessage> PatchPostPutStream<T>(string url, T content, HttpMethod method)
         {
             using (var request = new HttpRequestMessage(method, url))
-            using (var httpContent = CreateHttpContent(content))
+            using (var httpContent = CreateHttpStreamContent(content))
             {
                 request.Content = httpContent;
 
                 using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
                 {
-                    response.EnsureSuccessStatusCode();
-                    return response;
+                    if (response.IsSuccessStatusCode)
+                        return response;
+
+                    var resultContent = await response.Content.ReadAsStringAsync();
+
+                    throw new ApiException
+                    {
+                        StatusCode = (int)response.StatusCode,
+                        Content = resultContent
+                    };
                 }
             }
         }
@@ -126,7 +166,7 @@ namespace Rest.Facade
             return await this.PatchPostPutStream(url, putContent, HttpMethod.Put);
         }
 
-        private HttpContent CreateHttpContent(object content)
+        private HttpContent CreateHttpStreamContent(object content)
         {
             HttpContent httpContent = null;
 
