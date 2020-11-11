@@ -73,17 +73,17 @@ namespace Master.Berest.Facade
 
         public async Task<HttpResponseMessage> PostAsync<T>(string url, T postContent)
         {
-            return await this.PatchPostPutStream(url, postContent, HttpMethod.Post);
+            return await this.PatchPostPut(url, postContent, HttpMethod.Post);
         }
 
         public async Task<HttpResponseMessage> PutAsync<T>(string url, T putContent)
         {
-            return await this.PatchPostPutStream(url, putContent, HttpMethod.Put);
+            return await this.PatchPostPut(url, putContent, HttpMethod.Put);
         }
 
         public async Task<HttpResponseMessage> PatchAsync<T>(string url, T pathContent)
         {
-            return await this.PatchPostPutStream(url, pathContent, HttpMethod.Patch);
+            return await this.PatchPostPut(url, pathContent, HttpMethod.Patch);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string url)

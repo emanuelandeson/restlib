@@ -16,12 +16,33 @@ namespace RestTest
 
         public static async Task Teste()
         {
-            var rest = new RestLib();
+
+
+
+            var rest = new RestLib(new Dictionary<string, string>
+            {
+                {"Country","BR"},
+                {"City","SP"},
+            });
 
             //var a = await rest.GetAsync<Rootobject>("https://www.receitaws.com.br/v1/cnpj/27865757000102");
 
             //var getStream = await rest.GetStreamAsync<object>("http://localhost:3000/get");
-            //var postStream = await rest.PostStreamAsync("http://localhost:3000/post", new { Teste = "TEste" });
+            var postStream = await rest.PostStreamAsync("http://localhost:3000", new
+            {
+                items = "$mockData",
+                count = "$count",
+                anyKey = "anyValue"
+            });
+
+
+            var post = await rest.PostAsync("http://localhost:3000", new
+            {
+                items = "$mockData",
+                count = "$count",
+                anyKey = "anyValue"
+            });
+
             //var putStream = await rest.PutStreamAsync("http://localhost:3000/put", new { Teste = "TEste" });
             //var patchStream = await rest.PatchStreamAsync("http://localhost:3000/patch", new { Teste = "TEste" });
 
@@ -49,7 +70,7 @@ namespace RestTest
             {
                 throw ex;
             }
-            
+
         }
 
         public static async Task GetBasicRestSharp()
