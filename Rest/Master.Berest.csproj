@@ -11,6 +11,7 @@ Uses stream to write responses and static httpclient to more efficience.</Descri
     <PackageProjectUrl>https://github.com/emanuelandeson/restlib</PackageProjectUrl>
     <PackageTags>rest api httpclient http httprequest</PackageTags>
     <RepositoryUrl>https://github.com/emanuelandeson/restlib</RepositoryUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

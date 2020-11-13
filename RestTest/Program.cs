@@ -16,19 +16,15 @@ namespace RestTest
 
         public static async Task Teste()
         {
-
-
-
             var rest = new RestLib(new Dictionary<string, string>
             {
                 {"Country","BR"},
                 {"City","SP"},
             });
 
-            //var a = await rest.GetAsync<Rootobject>("https://www.receitaws.com.br/v1/cnpj/27865757000102");
 
             //var getStream = await rest.GetStreamAsync<object>("http://localhost:3000/get");
-            var postStream = await rest.PostStreamAsync("http://localhost:3000", new
+            var postStream = await rest.PostStreamAsync("https://tryer.free.beeceptor.com/", new
             {
                 items = "$mockData",
                 count = "$count",
@@ -36,7 +32,7 @@ namespace RestTest
             });
 
 
-            var post = await rest.PostAsync("http://localhost:3000", new
+            var post = await rest.PostAsync("https://tryer.free.beeceptor.com/", new
             {
                 items = "$mockData",
                 count = "$count",
@@ -62,6 +58,7 @@ namespace RestTest
 
             try
             {
+                //This is called by RestSharp Lib to compare performance with our lib...
                 await BenchmarkHelper.BenchAsync(GetBasicRestSharp, maxLoop, nameof(Program.GetBasicRestSharp), null, CancellationToken.None);
                 await BenchmarkHelper.BenchAsync(GetBasicStream, maxLoop, nameof(Program.GetBasicStream), null, CancellationToken.None);
                 await BenchmarkHelper.BenchAsync(GetBasic, maxLoop, nameof(Program.GetBasic), null, CancellationToken.None);
