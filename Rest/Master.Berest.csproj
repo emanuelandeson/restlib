@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageId>Master.Berest</PackageId>
+    <PackageId>berest</PackageId>
     <Authors>Emanuel</Authors>
     <Product>berest</Product>
     <Description>The first version of a simple library to call rest APIs.
