@@ -128,6 +128,33 @@ namespace Master.Berest.Facade
             }
         }
 
+
+        private async Task<T> PatchPostPutReadStream<T>(string url, T content, HttpMethod method)
+        {
+            using (var request = new HttpRequestMessage(method, url))
+            using (var httpContent = CreateHttpStreamContent(content))
+            {
+                request.Content = httpContent;
+
+                using (var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
+                {
+                    var stream = await response.Content.ReadAsStreamAsync();
+
+                    if (response.IsSuccessStatusCode)
+                        return StreamHandler.DeserializeJsonFromStream<T>(stream);
+
+                    var resultContent = await response.Content.ReadAsStringAsync();
+
+                    throw new ApiException
+                    {
+                        StatusCode = (int)response.StatusCode,
+                        Content = resultContent
+                    };
+                }
+            }
+        }
+
+
         private async Task<HttpResponseMessage> PatchPostPutStream<T>(string url, T content, HttpMethod method)
         {
             using (var request = new HttpRequestMessage(method, url))
@@ -156,14 +183,29 @@ namespace Master.Berest.Facade
             return await this.PatchPostPutStream(url, content, HttpMethod.Post);
         }
 
+        public async Task<T> PostResponseReadStreamAsync<T>(string url, T content)
+        {
+            return await this.PatchPostPutReadStream(url, content, HttpMethod.Post);
+        }
+
         public async Task<HttpResponseMessage> PatchStreamAsync<T>(string url, T pathContent)
         {
             return await this.PatchPostPutStream(url, pathContent, HttpMethod.Patch);
         }
 
+        public async Task<T> PatchResponseReadStreamAsync<T>(string url, T pathContent)
+        {
+            return await this.PatchPostPutReadStream(url, pathContent, HttpMethod.Patch);
+        }
+
         public async Task<HttpResponseMessage> PutStreamAsync<T>(string url, T putContent)
         {
             return await this.PatchPostPutStream(url, putContent, HttpMethod.Put);
+        }
+
+        public async Task<T> PutResponseReadStreamAsync<T>(string url, T putContent)
+        {
+            return await this.PatchPostPutReadStream(url, putContent, HttpMethod.Put);
         }
 
         private HttpContent CreateHttpStreamContent(object content)

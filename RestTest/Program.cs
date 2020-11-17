@@ -39,16 +39,13 @@ namespace RestTest
                 anyKey = "anyValue"
             });
 
-            //var putStream = await rest.PutStreamAsync("http://localhost:3000/put", new { Teste = "TEste" });
-            //var patchStream = await rest.PatchStreamAsync("http://localhost:3000/patch", new { Teste = "TEste" });
+            var putStream = await rest.PutStreamAsync("https://tryer.free.beeceptor.com/", new { Teste = "TEste" });
+            var patchStream = await rest.PatchStreamAsync("https://tryer.free.beeceptor.com/", new { Teste = "TEste" });
 
-            //var post = await rest.PostAsync("http://localhost:3000/post", new { Teste = "TEste" });
-            //var put = await rest.PutAsync("http://localhost:3000/put", new { Teste = "TEste" });
-            //var patch = await rest.PatchAsync("http://localhost:3000/patch", new { Teste = "TEste" });
-
-            //var delete = await rest.DeleteAsync("http://localhost:3000/delete");
-
-            //await rest.PutAsync("teste", obj);
+            //var post = await rest.PostAsync("https://tryer.free.beeceptor.com/", new { Teste = "TEste" });
+            //var put = await rest.PutAsync("https://tryer.free.beeceptor.com/", new { Teste = "TEste" });
+            //var patch = await rest.PatchAsync("https://tryer.free.beeceptor.com/", new { Teste = "TEste" });
+            //var delete = await rest.DeleteAsync("https://tryer.free.beeceptor.com/");
 
             int warm = 15;
             int maxLoop = 1;
@@ -72,8 +69,8 @@ namespace RestTest
 
         public static async Task GetBasicRestSharp()
         {
-            var client = new RestClient("https://api.twitter.com/1.1");
-            var request = new RestRequest("https://restcountries.eu/rest/v2/", DataFormat.Json);
+            var client = new RestClient("https://tryer.free.beeceptor.com/");
+            var request = new RestRequest("https://tryer.free.beeceptor.com/", DataFormat.Json);
 
             var response = await client.GetAsync<object>(request);
         }
@@ -87,13 +84,13 @@ namespace RestTest
                 {"City","SP"},
             });
 
-            await rest.GetAsync<object>("https://restcountries.eu/rest/v2/");
+            await rest.GetAsync<object>("https://tryer.free.beeceptor.com/");
         }
 
         public static async Task GetBasicStream()
         {
             var rest = new RestLib();
-            await rest.GetStreamAsync<object>("https://restcountries.eu/rest/v2/all");
+            await rest.GetStreamAsync<object>("https://tryer.free.beeceptor.com/");
         }
     }
 }
